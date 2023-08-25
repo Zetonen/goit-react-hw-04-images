@@ -1,7 +1,8 @@
 export const ImageGalleryItem = ({
   webformatURL,
   largeImageURL,
-  onSelectImage
+  onSelectImage,
+  id
 }) => {
   return (
     <li
@@ -11,7 +12,7 @@ export const ImageGalleryItem = ({
       <img
         className="ImageGalleryItem-image"
         src={webformatURL}
-        alt="image"
+        alt={id}
         large={largeImageURL}
       />
     </li>

@@ -4,6 +4,7 @@ import { ImageGallery } from './ImageGallery/ImageGallery';
 import { Button } from './Button/Button';
 import { Modal } from './Modal/Modal';
 import { RotatingLines } from 'react-loader-spinner';
+import { Notify } from 'notiflix';
 
 import axios from 'axios';
 
@@ -23,7 +24,7 @@ export class App extends Component {
 
   submitForm = data => {
     if (!data) {
-      // Notify.failure('Введіть коректний запит');
+      Notify.failure('Введіть коректний запит');
       return;
     }
     this.getGallery(data);
@@ -51,7 +52,7 @@ export class App extends Component {
         loading: false,
       });
 
-      // Notify.success(`Hooray! We found ${totalHits} images.`);
+      Notify.success(`Hooray! We found ${totalHits} images.`);
 
       if (12 < totalHits) {
         this.setState({ loadMore: true });
@@ -80,9 +81,9 @@ export class App extends Component {
       }));
       if ((this.state.page + 1) * 12 > this.state.total) {
         this.setState({ loadMore: false });
-        // Notify.info(
-        //   "We're sorry, but you've reached the end of search results."
-        // );
+        Notify.info(
+          "We're sorry, but you've reached the end of search results."
+        );
         return;
       }
     } catch (error) {
