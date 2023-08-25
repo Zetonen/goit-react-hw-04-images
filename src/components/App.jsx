@@ -1,5 +1,5 @@
 import { Component } from 'react';
-import Notiflix from 'notiflix';
+import { Notify } from 'notiflix';
 // import { Searchbar } from './Searchbar/Searchbar';
 // import { ImageGallery } from './ImageGallery/ImageGallery';
 // import { Button } from './Button/Button';
