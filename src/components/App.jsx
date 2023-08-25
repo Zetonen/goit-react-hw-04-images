@@ -1,13 +1,13 @@
 import { Component } from 'react';
-import { Notify } from 'notiflix/build/notiflix-notify-aio';
-import { Searchbar } from './Searchbar/Searchbar';
-import { ImageGallery } from './ImageGallery/ImageGallery';
-import { Button } from './Button/Button';
-import { Modal } from './Modal/Modal';
-import { RotatingLines } from 'react-loader-spinner';
-import axios from 'axios';
+// import { Notify } from 'notiflix/build/notiflix-notify-aio';
+// import { Searchbar } from './Searchbar/Searchbar';
+// import { ImageGallery } from './ImageGallery/ImageGallery';
+// import { Button } from './Button/Button';
+// import { Modal } from './Modal/Modal';
+// import { RotatingLines } from 'react-loader-spinner';
+// import axios from 'axios';
 
-const KEY = '36802723-0938614ccb0b003a152802b8b';
+// const KEY = '36802723-0938614ccb0b003a152802b8b';
 
 export class App extends Component {
   // state = {
