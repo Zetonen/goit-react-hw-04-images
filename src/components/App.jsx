@@ -1,5 +1,5 @@
 import { Component } from 'react';
-import { Notify } from 'notiflix/build/notiflix-notify-aio';
+import Notiflix from 'notiflix';
 // import { Searchbar } from './Searchbar/Searchbar';
 // import { ImageGallery } from './ImageGallery/ImageGallery';
 // import { Button } from './Button/Button';
