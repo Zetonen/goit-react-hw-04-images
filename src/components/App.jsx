@@ -1,14 +1,11 @@
 import { Component } from 'react';
+import { fetchGallery } from 'services/gallery-api';
 import { Searchbar } from './Searchbar/Searchbar';
 import { ImageGallery } from './ImageGallery/ImageGallery';
 import { Button } from './Button/Button';
 import { Modal } from './Modal/Modal';
 import { RotatingLines } from 'react-loader-spinner';
 import { Notify } from 'notiflix';
-
-import axios from 'axios';
-
-const KEY = '36802723-0938614ccb0b003a152802b8b';
 
 export class App extends Component {
   state = {
@@ -22,11 +19,12 @@ export class App extends Component {
     notFound: false,
   };
 
-  componentDidUpdate(nextProps, nextState) {
-    if (this.state.search !== nextState.search) {
+  componentDidUpdate(prevProps, prevState) {
+    const { search, page } = this.state;
+    if (search !== prevState.search) {
       this.getGallery();
     }
-    if (this.state.page !== nextState.page) {
+    if (page !== prevState.page) {
       this.searchMoreImage();
     }
   }
@@ -44,11 +42,10 @@ export class App extends Component {
     });
   };
   getGallery = async () => {
+    const { search, page } = this.state;
     try {
       this.setState({ loading: true });
-      const response = await axios.get(
-        `https://pixabay.com/api/?q=${this.state.search}&page=1&key=${KEY}&image_type=photo&orientation=horizontal&per_page=12`
-      );
+      const response = await fetchGallery(search, page);
 
       const {
         data: { totalHits, hits },
@@ -80,9 +77,8 @@ export class App extends Component {
     try {
       const { search, page, total } = this.state;
       this.setState({ loading: true });
-      const response = await axios.get(
-        `https://pixabay.com/api/?q=${search}&page=${page}&key=${KEY}&image_type=photo&orientation=horizontal&per_page=${12}`
-      );
+      const response = await fetchGallery(search, page);
+
       const {
         data: { hits },
       } = response;
