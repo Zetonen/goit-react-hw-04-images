@@ -17,7 +17,7 @@ export class Modal extends Component {
     return (
       <div className="Overlay" onClick={closeModal}>
         <div className="Modal" onClick={e => e.stopPropagation()}>
-          <img src={src} alt="photo"/>
+          <img src={src} alt="cat"/>
         </div>
       </div>
     );
