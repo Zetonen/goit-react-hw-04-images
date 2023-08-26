@@ -2,17 +2,17 @@ export const ImageGalleryItem = ({
   webformatURL,
   largeImageURL,
   onSelectImage,
-  id
+  tags,
 }) => {
   return (
     <li
       className="ImageGalleryItem"
-      onClick={() => onSelectImage(largeImageURL)}
+      onClick={() => onSelectImage(largeImageURL, tags)}
     >
       <img
         className="ImageGalleryItem-image"
         src={webformatURL}
-        alt={id}
+        alt={tags}
         large={largeImageURL}
       />
     </li>

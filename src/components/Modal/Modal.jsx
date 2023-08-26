@@ -13,11 +13,11 @@ export class Modal extends Component {
     }
   };
   render() {
-    const { src, closeModal } = this.props;
+    const { src, closeModal, tags } = this.props;
     return (
       <div className="Overlay" onClick={closeModal}>
         <div className="Modal" onClick={e => e.stopPropagation()}>
-          <img src={src} alt="cat"/>
+          <img src={src} alt={tags}/>
         </div>
       </div>
     );

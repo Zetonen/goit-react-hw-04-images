@@ -1,4 +1,5 @@
 import { Formik, Form, Field } from 'formik';
+import { BsSearch } from 'react-icons/bs';
 
 export const Searchbar = ({ onSubmit }) => {
   const handleSubmit = async (value, actions) => {
@@ -12,6 +13,7 @@ export const Searchbar = ({ onSubmit }) => {
       <Formik initialValues={{ search: '' }} onSubmit={handleSubmit}>
         <Form className="SearchForm">
           <button type="submit" className="SearchForm-button">
+            <BsSearch />
             <span className="SearchForm-button-label">Search</span>
           </button>
 
