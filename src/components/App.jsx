@@ -22,69 +22,79 @@ export class App extends Component {
     notFound: false,
   };
 
+  componentDidUpdate(nextProps, nextState) {
+    if (this.state.search !== nextState.search) {
+      this.getGallery();
+    }
+    if (this.state.page !== nextState.page) {
+      this.searchMoreImage();
+    }
+  }
   submitForm = data => {
     if (!data) {
       Notify.failure('Введіть коректний запит');
       return;
     }
-    this.getGallery(data);
+    this.setState({
+      search: data,
+      loadMore: false,
+      page: 1,
+      gallery: [],
+      notFound: false,
+    });
   };
-  getGallery = async request => {
+  getGallery = async () => {
     try {
-      this.setState({ loading: true , notFound: false});
+      this.setState({ loading: true });
       const response = await axios.get(
-        `https://pixabay.com/api/?q=${request}&page=1&key=${KEY}&image_type=photo&orientation=horizontal&per_page=12`
+        `https://pixabay.com/api/?q=${this.state.search}&page=1&key=${KEY}&image_type=photo&orientation=horizontal&per_page=12`
       );
 
       const {
         data: { totalHits, hits },
       } = response;
       if (totalHits === 0) {
-        this.setState({ loading: false, gallery: [], notFound: true, loadMore: false });
+        this.setState({ loading: false, notFound: true });
         return;
       }
 
       this.setState({
-        search: request,
         gallery: [...hits],
         total: totalHits,
-        page: 1,
         loading: false,
       });
 
       Notify.success(`Hooray! We found ${totalHits} images.`);
 
-      if (12 < totalHits) {
+      if (hits.length < totalHits) {
         this.setState({ loadMore: true });
-        return;
       }
-      this.setState({ loadMore: false });
     } catch (error) {
       console.log(error);
     }
   };
+  loadMore = () => {
+    this.setState({ page: this.state.page + 1 });
+  };
   searchMoreImage = async () => {
     try {
+      const { search, page, total } = this.state;
       this.setState({ loading: true });
       const response = await axios.get(
-        `https://pixabay.com/api/?q=${this.state.search}&page=${
-          this.state.page + 1
-        }&key=${KEY}&image_type=photo&orientation=horizontal&per_page=${12}`
+        `https://pixabay.com/api/?q=${search}&page=${page}&key=${KEY}&image_type=photo&orientation=horizontal&per_page=${12}`
       );
       const {
         data: { hits },
       } = response;
       this.setState(prevState => ({
         gallery: [...prevState.gallery, ...hits],
-        page: prevState.page + 1,
         loading: false,
       }));
-      if ((this.state.page + 1) * 12 > this.state.total) {
+      if (page * 12 > total) {
         this.setState({ loadMore: false });
         Notify.info(
           "We're sorry, but you've reached the end of search results."
         );
-        return;
       }
     } catch (error) {
       console.log(error);
@@ -100,14 +110,17 @@ export class App extends Component {
   render() {
     const { gallery, loadMore, modalScr, loading, notFound } = this.state;
     return (
-      // <></>
       <div className="App">
         {modalScr && <Modal src={modalScr} closeModal={this.closeModal} />}
         <Searchbar onSubmit={this.submitForm} />
         {gallery.length !== 0 && (
           <ImageGallery gallery={gallery} onSelectImage={this.selectImage} />
         )}
-        {notFound && <p style={{textAlign: 'center', fontSize: '32px'}}>Нічого не знайдено</p>}
+        {notFound && (
+          <p style={{ textAlign: 'center', fontSize: '32px' }}>
+            Нічого не знайдено
+          </p>
+        )}
         {loading && (
           <div style={{ margin: 'auto' }}>
             <RotatingLines
@@ -119,7 +132,7 @@ export class App extends Component {
             />
           </div>
         )}
-        {loadMore && (loading || <Button loadMore={this.searchMoreImage} />)}
+        {loadMore && (loading || <Button loadMore={this.loadMore} />)}
       </div>
     );
   }
