@@ -30,27 +30,6 @@ export const App = () => {
     setNotFound(false);
     setError(null);
   };
-  const getGallery = async () => {
-    try {
-      setLoading(true);
-      const response = await fetchGallery(search, page);
-      const {
-        data: { totalHits, hits },
-      } = response;
-
-      if (hits.length === 0) {
-        setNotFound(true);
-        return;
-      }
-      setGallery(prevState => [...prevState, ...hits]);
-      setTotal(totalHits);
-      page === 1 && Notify.success(`Hooray! We found ${totalHits} images.`);
-    } catch (error) {
-      setError(error.message);
-    } finally {
-      setLoading(false);
-    }
-  };
 
   const handlesLoadMore = () => {
     setPage(prevState => prevState + 1);
@@ -66,11 +45,32 @@ export const App = () => {
     setTags(null);
   };
   useEffect(() => {
+    const getGallery = async () => {
+      try {
+        setLoading(true);
+        const response = await fetchGallery(search, page);
+        const {
+          data: { totalHits, hits },
+        } = response;
+
+        if (hits.length === 0) {
+          setNotFound(true);
+          return;
+        }
+        setGallery(prevState => [...prevState, ...hits]);
+        setTotal(totalHits);
+        page === 1 && Notify.success(`Hooray! We found ${totalHits} images.`);
+      } catch (error) {
+        setError(error.message);
+      } finally {
+        setLoading(false);
+      }
+    };
     if (search) {
       getGallery();
     }
   }, [search, page]);
-  
+
   const loadMoreBtn = total / gallery.length > 1;
   return (
     <div className="App">
