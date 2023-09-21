@@ -1,25 +1,24 @@
-import { Component } from 'react';
+import { useEffect } from 'react';
 
-export class Modal extends Component {
-  componentDidMount() {
-    document.addEventListener('keydown', this.handleKeyDownEsc);
-  }
-  componentWillUnmount() {
-    document.removeEventListener('keydown', this.handleKeyDownEsc);
-  }
-  handleKeyDownEsc = e => {
+export const Modal = props => {
+  useEffect(() => {
+    document.addEventListener('keydown', handleKeyDownEsc);
+    return () => {
+      document.removeEventListener('keydown', handleKeyDownEsc);
+    };
+  }, []);
+
+  function handleKeyDownEsc(e) {
     if (e.key === 'Escape') {
-      this.props.closeModal();
+      props.closeModal();
     }
-  };
-  render() {
-    const { src, closeModal, tags } = this.props;
-    return (
-      <div className="Overlay" onClick={closeModal}>
-        <div className="Modal" onClick={e => e.stopPropagation()}>
-          <img src={src} alt={tags}/>
-        </div>
-      </div>
-    );
   }
-}
+  const { src, closeModal, tags } = props;
+  return (
+    <div className="Overlay" onClick={closeModal}>
+      <div className="Modal" onClick={e => e.stopPropagation()}>
+        <img src={src} alt={tags} />
+      </div>
+    </div>
+  );
+};

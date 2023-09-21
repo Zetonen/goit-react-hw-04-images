@@ -1,4 +1,4 @@
-import { Component } from 'react';
+import { useState, useEffect } from 'react';
 import { fetchGallery } from 'services/gallery-api';
 import { Searchbar } from './Searchbar/Searchbar';
 import { ImageGallery } from './ImageGallery/ImageGallery';
@@ -7,106 +7,100 @@ import { Modal } from './Modal/Modal';
 import { RotatingLines } from 'react-loader-spinner';
 import { Notify } from 'notiflix';
 
-export class App extends Component {
-  state = {
-    search: '',
-    gallery: [],
-    total: null,
-    page: 1,
-    loadMore: false,
-    loading: false,
-    showModal: false,
-    modalScr: null,
-    tags: null,
-    notFound: false,
-    error: null,
-  };
+export const App = () => {
+  const [search, setSearch] = useState('');
+  const [gallery, setGallery] = useState([]);
+  const [total, setTotal] = useState(null);
+  const [page, setPage] = useState(1);
+  const [loading, setLoading] = useState(false);
+  const [showModal, setShowModal] = useState(false);
+  const [modalScr, setModalSrc] = useState(null);
+  const [tags, setTags] = useState(null);
+  const [notFound, setNotFound] = useState(false);
+  const [error, setError] = useState(null);
 
-  componentDidUpdate(prevProps, prevState) {
-    const { search, page } = this.state;
-    if (search !== prevState.search || page !== prevState.page) {
-      this.getGallery();
-    }
-  }
-  submitForm = data => {
+  const submitForm = data => {
     if (!data) {
       Notify.failure('Введіть коректний запит');
       return;
     }
-    this.setState({
-      search: data,
-      page: 1,
-      gallery: [],
-      notFound: false,
-      error: null,
-    });
+    setSearch(data);
+    setPage(1);
+    setGallery([]);
+    setNotFound(false);
+    setError(null);
   };
-  getGallery = async () => {
-    const { search, page } = this.state;
+  const getGallery = async () => {
     try {
-      this.setState({ loading: true });
+      setLoading(true);
       const response = await fetchGallery(search, page);
       const {
         data: { totalHits, hits },
       } = response;
 
       if (hits.length === 0) {
-        this.setState({ notFound: true });
+        setNotFound(true);
         return;
       }
-
-      this.setState(prevState => ({
-        gallery: [...prevState.gallery, ...hits],
-        total: totalHits,
-      }));
-
+      setGallery(prevState => [...prevState, ...hits]);
+      setTotal(totalHits);
       page === 1 && Notify.success(`Hooray! We found ${totalHits} images.`);
     } catch (error) {
-      this.setState({ error: error.message });
+      setError(error.message);
     } finally {
-      this.setState({ loading: false });
+      setLoading(false);
     }
   };
-  loadMore = () => {
-    this.setState(prevState => ({ page: prevState.page + 1 }));
-  };
-  openModal = (src, alt) => {
-    this.setState({ modalScr: src, showModal: true, tags: alt });
-  };
-  closeModal = () => {
-    this.setState({ modalScr: null, showModal: false, tags: null });
-  };
 
-  render() {
-    const { gallery, showModal, modalScr, loading, notFound, error, total,tags } =
-      this.state;
-    const loadMore = total / gallery.length > 1;
-    return (
-      <div className="App">
-        <Searchbar onSubmit={this.submitForm} />
-        {gallery.length !== 0 && (
-          <ImageGallery gallery={gallery} onSelectImage={this.openModal} />
-        )}
-        {error && <p>{error}</p>}
-        {notFound && (
-          <p style={{ textAlign: 'center', fontSize: '32px' }}>
-            Нічого не знайдено
-          </p>
-        )}
-        {loading && (
-          <div style={{ margin: 'auto' }}>
-            <RotatingLines
-              strokeColor="grey"
-              strokeWidth="5"
-              animationDuration="0.75"
-              width="96"
-              visible={true}
-            />
-          </div>
-        )}
-        {loadMore && !loading && gallery.length > 0 && <Button loadMore={this.loadMore} />}
-        {showModal && <Modal src={modalScr} closeModal={this.closeModal} tags={tags}/>}
-      </div>
-    );
-  }
-}
+  const handlesLoadMore = () => {
+    setPage(prevState => prevState + 1);
+  };
+  const openModal = (src, alt) => {
+    setModalSrc(src);
+    setShowModal(true);
+    setTags(alt);
+  };
+  const closeModal = () => {
+    setModalSrc(null);
+    setShowModal(false);
+    setTags(null);
+  };
+  useEffect(() => {
+    if (search) {
+      getGallery();
+    }
+  }, [search, page]);
+  
+  const loadMoreBtn = total / gallery.length > 1;
+  return (
+    <div className="App">
+      <Searchbar onSubmit={submitForm} />
+      {gallery.length !== 0 && (
+        <ImageGallery gallery={gallery} onSelectImage={openModal} />
+      )}
+      {error && <p>{error}</p>}
+      {notFound && (
+        <p style={{ textAlign: 'center', fontSize: '32px' }}>
+          Нічого не знайдено
+        </p>
+      )}
+      {loading && (
+        <div style={{ margin: 'auto' }}>
+          <RotatingLines
+            strokeColor="grey"
+            strokeWidth="5"
+            animationDuration="0.75"
+            width="96"
+            visible={true}
+          />
+        </div>
+      )}
+      {loadMoreBtn && !loading && gallery.length > 0 && (
+        <Button loadMore={handlesLoadMore} />
+      )}
+      {showModal && (
+        <Modal src={modalScr} closeModal={closeModal} tags={tags} />
+      )}
+    </div>
+  );
+};
