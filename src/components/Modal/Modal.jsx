@@ -2,17 +2,17 @@ import { useEffect } from 'react';
 
 export const Modal = props => {
   useEffect(() => {
+    const handleKeyDownEsc = (e) => {
+      if (e.key === 'Escape') {
+        props.closeModal();
+      }
+    }
     document.addEventListener('keydown', handleKeyDownEsc);
     return () => {
       document.removeEventListener('keydown', handleKeyDownEsc);
     };
   });
 
-  function handleKeyDownEsc(e) {
-    if (e.key === 'Escape') {
-      props.closeModal();
-    }
-  }
   const { src, closeModal, tags } = props;
   return (
     <div className="Overlay" onClick={closeModal}>
