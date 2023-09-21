@@ -2,9 +2,9 @@ import { Formik, Form, Field } from 'formik';
 import { BsSearch } from 'react-icons/bs';
 
 export const Searchbar = ({ onSubmit }) => {
-  const handleSubmit = async (value, actions) => {
+  const handleSubmit = (value, actions) => {
     const corectValue = value.search.trim();
-    await onSubmit(corectValue);
+    onSubmit(corectValue);
     actions.setSubmitting(false);
     actions.resetForm();
   };

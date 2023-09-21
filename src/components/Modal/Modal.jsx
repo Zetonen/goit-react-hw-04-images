@@ -1,19 +1,19 @@
 import { useEffect } from 'react';
 
 export const Modal = props => {
+  const { src, closeModal, tags } = props;
   useEffect(() => {
-    const handleKeyDownEsc = (e) => {
+    const handleKeyDownEsc = e => {
       if (e.key === 'Escape') {
-        props.closeModal();
+        closeModal();
       }
-    }
+    };
     document.addEventListener('keydown', handleKeyDownEsc);
     return () => {
       document.removeEventListener('keydown', handleKeyDownEsc);
     };
-  });
+  }, [closeModal]);
 
-  const { src, closeModal, tags } = props;
   return (
     <div className="Overlay" onClick={closeModal}>
       <div className="Modal" onClick={e => e.stopPropagation()}>
