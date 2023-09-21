@@ -6,7 +6,7 @@ export const Modal = props => {
     return () => {
       document.removeEventListener('keydown', handleKeyDownEsc);
     };
-  }, []);
+  });
 
   function handleKeyDownEsc(e) {
     if (e.key === 'Escape') {
